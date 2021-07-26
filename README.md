@@ -7,7 +7,7 @@ for run in ESP32 microcontroller
 ## First install python 3
 https://www.python.org/downloads/
 
-## In windows open cmd or powerShell and type:
+## In windows open cmd or powershell and type:
 $ python main_start_ws.py
 
 ## In linux or mac open shell and type:
