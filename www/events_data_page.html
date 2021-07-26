@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+
+<html lang=en>
+
+	<head>
+		<meta charset="UTF-8" />
+		<title>MicroWebSrv Test Page</title>
+		<link rel="stylesheet" href="style.css" />
+	</head>
+
+    <style>
+        a#led, a#btn {
+            display: inline-block;
+            color: red;
+            height: 50px; /*sets height of element*/
+            background: black; /*sets the background of this element (here a solid colour)*/
+            transition: all 0.6s; /*sets a transition (for hover effect)*/
+            padding-left: 20px; /*sets 'padding'*/
+            padding-right: 20px; /*sets 'padding'*/
+            line-height: 50px; /*for this, it sets vertical alignment*/
+        }
+    </style>
+
+	<body>
+		<h1>Test bidirection Control Page</h1>
+        <a href="#" onclick="ledClick()" id="led">On bord Led</a>
+        <br>
+        <br>
+        <a href="#" id="btn">On bord Button</a>
+        <br>
+        <p id=output></p>
+
+        <label for="w3review">send: (ret in: global res)</label>
+        <br>
+        <textarea id="w3review" name="w3review" rows="4" cols="50"></textarea>
+        <br><br>
+        <button type="text" onclick="sendClick()" value="Send">Send</button>
+        <br>
+        <p id=res></p>
+        
+        <!--for led  -->
+        <script> 
+            let ledOn = false
+            document.getElementById("led").style.background = 'black';
+            function ledClick() {
+                ledOn = !ledOn
+                if (ledOn) {
+                    // document.getElementById("led").style.background = 'blue';
+                } else {
+                    // document.getElementById("led").style.background = 'black';
+                }
+                var xhttp = new XMLHttpRequest();
+                xhttp.open('GET', 'http://' + window.location.hostname + '/led?status='+ ledOn, true);
+                xhttp.setRequestHeader('Content-type', 'application/json');
+                xhttp.send(ledOn);
+            }
+            function sendClick() {
+                txt = document.getElementById("w3review").value
+                msg = {}
+                msg['msg'] = txt
+                websocket.send(JSON.stringify(msg));
+                res.innerHTML = "return: "
+            }
+        
+        </script>
+
+        <!--for btn  -->
+        <script language="javascript">
+
+            var output;
+            var res;
+            document.getElementById("btn").style.background = 'black';
+            window.addEventListener("load", init_window_load, false);
+            function init_window_load()
+            {
+                output = document.getElementById("output");
+                res = document.getElementById("res");
+                res.style.wordWrap = "break-word"
+                openWebSocket();
+            }
+    
+            function openWebSocket()
+            {
+                var wsUri           = "ws://" + window.location.hostname + '/events_data_page';
+                writeToScreen("Connection to " + wsUri + "...")
+                websocket           = new WebSocket(wsUri);
+                websocket.onopen    = function(evt) { onOpen    (evt) };
+                websocket.onclose   = function(evt) { onClose   (evt) };
+                websocket.onmessage = function(evt) { onMessage (evt) };
+                websocket.onerror   = function(evt) { onError   (evt) };
+            }
+    
+            function onOpen(evt)
+            {
+                writeToScreen("<strong>-- CONNECTED --</strong>");
+            }
+    
+            function onClose(evt)
+            {
+                writeToScreen("<strong>-- DISCONNECTED --</strong>");
+            }
+    
+            function onMessage(evt)
+            {
+                console.log('status: ' + evt.data)
+                rcv = JSON.parse(evt.data)
+                if (rcv.hasOwnProperty('btn')) {
+                    if (rcv.btn === 'False') {
+                        document.getElementById("btn").style.background = 'blue';
+                    } else {
+                        document.getElementById("btn").style.background = 'black';
+                    }
+                }else if(rcv.hasOwnProperty('led')){
+                     if (rcv.led === 'False') {
+                        document.getElementById("led").style.background = 'blue';
+                    } else {
+                        document.getElementById("led").style.background = 'black';
+                    }
+                 }else if(rcv.hasOwnProperty('res')){
+                    res.innerHTML = "return: " + rcv.res
+                 }
+
+                    // writeToScreen('MSG FROM SERVER : <span style="color: blue;">' + evt.data + '</span>');
+            }
+    
+            function onError(evt)
+            {
+                writeToScreen('ERROR : <span style="color: red;">' + evt.data + '</span>');
+            }
+    
+            function SendMsg(msg)
+            {
+                writeToScreen('MSG TO SERVER : <span style="color: green;">' + msg + '</span>');
+                websocket.send(msg);
+            }
+    
+            function writeToScreen(s)
+            {
+                var pre = document.createElement("p");
+                pre.style.wordWrap = "break-word";
+                pre.innerHTML = s;
+                output.appendChild(pre);
+            }
+    
+        </script>
+	</body>
+
+</html>

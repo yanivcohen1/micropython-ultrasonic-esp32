@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+
+<html lang=en>
+
+	<head>
+		<meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Ultrasonic Control Page</title>
+		<!-- <link rel="stylesheet" href="style.css" /> -->
+        <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@3.4.1/dist/chart.min.js"></script> -->
+        <script src="chart.min.js"></script>
+	</head>
+
+    <style>
+        a#led{
+            display: inline-block;
+            color: white;
+            height: 40px; /*sets height of element*/
+            background: gray; /*sets the background of this element (here a solid colour)*/
+            transition: all 0.6s; /*sets a transition (for hover effect)*/
+            padding-left: 15px; /*sets 'padding' same as right for the circle*/
+            padding-right: 15px; /*sets 'padding' same as left for the circle*/
+            padding-top: 15px; /* for center of the circle */
+            line-height: 25px; /*for this, it sets vertical alignment*/
+            border-radius: 50%; /*for round shape*/
+            text-decoration: none; /* for remove uderline */
+        }
+        .smallLinesGap{
+            line-height: 1px;
+        }
+        /*  p {
+            display: block;
+            font: 1rem 'Fira Sans', sans-serif;
+            margin: .2rem 0;
+        } */
+    </style>
+
+	<body>
+		<h2>Ultrasonic Control Page</h2>
+        <hr>
+        <br>
+        <fieldset>
+            <legend >Status:</legend>
+            <div class="smallLinesGap">
+                <p id=WSconnectInfo></p>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Alarms:</legend>
+            <div class="smallLinesGap">
+                <span>Proximity Led: </span><a href="#" id="led">OFF</a>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Set distance:</legend>
+            <div class="smallLinesGap">
+                <input id="sliderIn" type="range" oninput="sliderChange()" min="1" max="100" value="50" style="width: 200px">
+                <p id=sliderInPrint></p>
+                <button id="send" type="text" onclick="sendClick()">Send set distance</button>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Read distance:</legend>
+            <div class="smallLinesGap">
+                <progress id="sliderOut" disabled max="100" value="50" style="width: 200px"></progress>
+                <p id=sliderOutPrint></p>
+            </div>
+        </fieldset>
+        <details>
+            <summary><dfn>Details</dfn></summary>
+            <p>This project is final project by "Yair Cohen. <sub>ltd</sub>"</p>
+        </details>
+        <div>
+            <canvas id="myChart"></canvas>
+        </div>
+        <br>
+        <br>
+        <br>
+        
+        <script> 
+            // init
+            let ledOn = false
+            var sliderIn = document.getElementById("sliderIn");
+            sliderIn.value = 1;
+            var sliderInPrint = document.getElementById("sliderInPrint");
+            sliderInPrint.innerHTML = parseInt(parseInt(sliderIn.value)*100/100);
+            var send = document.getElementById("send")
+            send.disabled = true;
+            var WSconnectInfo;
+            document.getElementById('myChart').height = 200;
+            var labels = [];
+            var data = {
+                labels: labels,
+                datasets: [{
+                    label: 'Didtance',
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    data: [],
+                }]
+            };
+            var config = {
+                    type: 'line',
+                    data,
+                    options: {
+                        maintainAspectRatio: false,
+                    }
+            }
+            var chart = new Chart(
+                document.getElementById('myChart'),
+                config
+            );
+            window.addEventListener("load", onWindowLoad, false);
+
+            function onWindowLoad()
+            {
+                WSconnectInfo = document.getElementById("WSconnectInfo");
+                WSconnectInfo.style.wordWrap = "break-word"
+                openWebSocket();
+            }
+
+            function sendClick() {
+                msg = {}
+                msg[SendData.slider] = sliderInPrint.innerHTML
+                websocket.send(JSON.stringify(msg));
+                send.disabled = true;
+            }
+            
+            function sliderChange() {
+                sliderInPrint.innerHTML = parseInt(parseInt(sliderIn.value)*100/100);
+                send.disabled = false;  
+            }
+
+            function openWebSocket()
+            {
+                var wsUri           = "ws://" + window.location.hostname + '/ultrasonic_page';
+                writeToScreen("Connection to " + wsUri + "...")
+                websocket           = new WebSocket(wsUri);
+                websocket.onopen    = function(evt) { onOpen    (evt) };
+                websocket.onclose   = function(evt) { onClose   (evt) };
+                websocket.onmessage = function(evt) { onMessage (evt) };
+                websocket.onerror   = function(evt) { onError   (evt) };
+            }
+    
+            function onOpen(evt)
+            {
+                writeToScreen("<strong>-- CONNECTED --</strong>");
+            }
+    
+            function onClose(evt)
+            {
+                writeToScreen("<strong>-- DISCONNECTED --</strong>");
+            }
+            
+            function addData(chart, labelIn, dataIn) {
+                const MAX_SIZE = 50
+                if (chart.data.labels.length > MAX_SIZE)  chart.data.labels.shift()
+                chart.data.labels.push(labelIn);
+                chart.data.datasets.forEach((dataset) => {
+                    if (dataset.data.length > MAX_SIZE)  dataset.data.shift()
+                    dataset.data.push(dataIn);
+                });
+                chart.update();
+            }
+
+            function onMessage(evt)
+            {
+                console.log('status: ' + evt.data)
+                rcv = JSON.parse(evt.data)
+                if (rcv.hasOwnProperty(RecData.distance)){
+                    document.getElementById("sliderOut").value = rcv[RecData.distance];
+                    document.getElementById("sliderOutPrint").innerHTML = parseInt(parseInt(rcv[RecData.distance])*100/100);
+                   if(rcv[RecData.distance] < 170) {
+                        labelIn = new Date().getSeconds()
+                        dataIn = rcv[RecData.distance]
+                        addData(chart, labelIn, dataIn)
+                   }
+                }else if(rcv.hasOwnProperty(RecData.led)){
+                    if (rcv[RecData.led] === 'True') {
+                        document.getElementById("led").style.background = 'blue';
+                        document.getElementById("led").innerHTML = 'ON&nbsp;';
+                    } else {
+                        document.getElementById("led").style.background = 'gray';
+                        document.getElementById("led").innerHTML = 'OFF';
+                    }
+                }else if(rcv.hasOwnProperty(RecData.slider)){
+                    sliderIn.value = rcv[RecData.slider]
+                    sliderInPrint.innerHTML = parseInt(parseInt(sliderIn.value)*100/100);
+                }
+            }
+    
+            function onError(evt)
+            {
+                writeToScreen('ERROR : <span style="color: red;">' + evt.data + '</span>');
+            }
+    
+            function SendMsg(msg)
+            {
+                writeToScreen('MSG TO SERVER : <span style="color: green;">' + msg + '</span>');
+                websocket.send(msg);
+            }
+    
+            function writeToScreen(s)
+            {
+                WSconnectInfo.innerHTML = s
+            }
+
+            class RecData {
+                static distance = 'distance'
+                static led = 'led'
+                static slider = 'slider'
+            }
+
+            class SendData {
+                static slider = 'slider'
+            } 
+        </script>
+	</body>
+
+</html>

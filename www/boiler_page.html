@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+
+<html lang=en>
+
+	<head>
+		<meta charset="UTF-8" />
+		<title>MicroWebSrv Test Page</title>
+		<link rel="stylesheet" href="style.css" />
+	</head>
+
+    <style>
+        a#led, a#btn {
+            display: inline-block;
+            color: red;
+            height: 50px; /*sets height of element*/
+            background: black; /*sets the background of this element (here a solid colour)*/
+            transition: all 0.6s; /*sets a transition (for hover effect)*/
+            padding-left: 20px; /*sets 'padding'*/
+            padding-right: 20px; /*sets 'padding'*/
+            line-height: 50px; /*for this, it sets vertical alignment*/
+        }
+        label {
+            display: block;
+            font: 1rem 'Fira Sans', sans-serif;
+        }
+
+        input,
+        label {
+            margin: .4rem 0;
+        }
+    </style>
+
+	<body>
+		<h2>boiler control Page</h2>
+        <a href="#" onclick="ledClick()" id="led">Boiler On Led</a>
+        <br>
+   
+        <label for="appt">Choose a time to boiler on:</label>
+        <input type="time" id="appt" name="appt"
+            min="05:00" max="00:00" required>
+        <small>hours are 5am to 12pm</small>
+
+        <label for="appt">Choose a time to boiler off:</label>
+        <input type="time" id="appt" name="appt"
+            min="05:00" max="00:00" required>
+        <small>hours are 5am to 12pm</small>
+        <p id=output></p>
+        <h3>Set boiler Temp</h3>
+        <input id="sliderIn" type="range" min="1" max="4095" value="50">
+        <br>
+        <p id=sliderInPrint></p>
+        <h3>read boiler Temp</h3>
+        <input id="sliderOut" type="range" disabled min="1" max="4095" value="50">
+        <br>
+        <p id=sliderOutPrint></p>
+       
+        
+        <!-- for slider  -->
+        <script> 
+            // init
+            let ledOn = false
+            var sliderIn = document.getElementById("sliderIn");
+            sliderIn.value = 1;
+            var sliderInPrint = document.getElementById("sliderInPrint");
+            sliderInPrint.innerHTML = parseInt(parseInt(sliderIn.value)*100/4095);
+
+            sliderIn.oninput = function() {
+                sliderInPrint.innerHTML = parseInt(parseInt(this.value)*100/4095);
+                msg = {}
+                msg[SendData.temp] = this.value
+                // msg='{"temp": '+ this.value + '}'
+                websocket.send(JSON.stringify(msg));
+            }
+
+            var output;
+            function init()
+            {
+                output = document.getElementById("output");
+                output.style.wordWrap = "break-word"
+                testWebSocket();
+            }
+    
+            function testWebSocket()
+            {
+                var wsUri           = "ws://" + window.location.hostname + '/boiler';
+                writeToScreen("Connection to " + wsUri + "...")
+                websocket           = new WebSocket(wsUri);
+                websocket.onopen    = function(evt) { onOpen    (evt) };
+                websocket.onclose   = function(evt) { onClose   (evt) };
+                websocket.onmessage = function(evt) { onMessage (evt) };
+                websocket.onerror   = function(evt) { onError   (evt) };
+            }
+    
+            function onOpen(evt)
+            {
+                writeToScreen("<strong>-- CONNECTED --</strong>");
+            }
+    
+            function onClose(evt)
+            {
+                writeToScreen("<strong>-- DISCONNECTED --</strong>");
+            }
+    
+            function onMessage(evt)
+            {
+                console.log('status: ' + evt.data)
+                rcv = JSON.parse(evt.data)
+                if (rcv.hasOwnProperty(RecData.temp)){
+                    document.getElementById("sliderOut").value = rcv[RecData.temp];
+                    document.getElementById("sliderOutPrint").innerHTML = parseInt(parseInt(rcv[RecData.temp])*100/4095);
+                }else if(rcv.hasOwnProperty(RecData.led)){
+                    if (rcv[RecData.led] === 'True') {
+                        document.getElementById("led").style.background = 'blue';
+                    } else {
+                        document.getElementById("led").style.background = 'black';
+                    }
+                }else if(rcv.hasOwnProperty(RecData.slider)){
+                    sliderIn.value = rcv[RecData.slider]
+                    sliderInPrint.innerHTML = parseInt(parseInt(sliderIn.value)*100/4095);
+                }
+                    // writeToScreen('MSG FROM SERVER : <span style="color: blue;">' + evt.data + '</span>');
+            }
+    
+            function onError(evt)
+            {
+                writeToScreen('ERROR : <span style="color: red;">' + evt.data + '</span>');
+            }
+    
+            function SendMsg(msg)
+            {
+                writeToScreen('MSG TO SERVER : <span style="color: green;">' + msg + '</span>');
+                websocket.send(msg);
+            }
+    
+            function writeToScreen(s)
+            {
+                output.innerHTML = s
+                /* var pre = document.createElement("p");
+                pre.style.wordWrap = "break-word";
+                pre.innerHTML = s;
+                output.appendChild(pre); */
+            }
+    
+            window.addEventListener("load", init, false);
+    
+            class RecData {
+                static temp = 'temp'
+                static led = 'led'
+                static slider = 'slider'
+            }
+
+            class SendData {
+                static temp = 'temp'
+            } 
+        </script>
+	</body>
+
+</html>

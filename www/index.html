@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  font-family: "Lato", sans-serif;
+}
+
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 0px;
+}
+
+.sidenav a {
+  padding: 8px 8px 8px 15px;
+  text-decoration: none;
+  font-size: 15px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+#main {
+  transition: margin-left .5s;
+  padding: 16px;
+}
+
+.active {
+  color: white !important;
+  background-color: #666;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+</style>
+</head>
+<body style="margin:0px;padding:0px;overflow:hidden">
+
+<div id="mySidenav" class="sidenav">
+	<!-- <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a> -->
+	<a href="main._page.html" target="iframe_a" class="active" onclick="selecte(this)">main</a>
+	<a href="ultrasonic_page.html" target="iframe_a" onclick="selecte(this)">Ultrasonic</a>
+	<a href="events_data_page.html" target="iframe_a" onclick="selecte(this)">events</a>
+	<a href="contineuse-data-page.html" target="iframe_a" onclick="selecte(this)">contineuse</a>
+	<a href="boiler_page.html" target="iframe_a" onclick="selecte(this)">Boiler</a>
+	<a href="wstest.html" target="iframe_a" onclick="selecte(this)">WebSockets</a>
+	<a href="wschat.html" target="iframe_a" onclick="selecte(this)">chate</a>
+	<a href="test.pyhtml" target="iframe_a" onclick="selecte(this)">pyhtml</a>
+</div>
+
+<div id="main">
+  <span style="font-size:30px;cursor:pointer" onclick="clickNavMenu()">&#9776;</span>
+  <iframe id="frame" src="main._page.html" name="iframe_a" frameborder="0" style="overflow:hidden;overflow-x:hidden;overflow-y:hidden;height:100%;width:100%;position:absolute;top:50px;left:0px;right:0px;bottom:0px" height="calc(100% + 100px)" width="100%"></iframe>
+</div>
+
+<script>
+let isOpen = false;
+function clickNavMenu() {
+	if(!isOpen){
+		isOpen = true
+		document.getElementById("mySidenav").style.width = "100px";
+		document.getElementById("main").style.marginLeft = "100px";
+		document.getElementById("frame").style.marginLeft = "100px";
+		document.getElementById("frame").style.width = "calc(100% - 100px)";
+	} else {
+		isOpen = false
+		closeNav();
+	}
+}
+
+function closeNav() {
+  document.getElementById("mySidenav").style.width = "0";
+  document.getElementById("main").style.marginLeft= "0";
+  document.getElementById("frame").style.marginLeft = "0";
+  document.getElementById("frame").style.width = "100%";
+}
+
+function selecte(elmnt) {
+	var current = document.querySelector("#mySidenav .active");
+	current.className = current.className.replace("active", "");
+	elmnt.className += " active";
+}
+
+// msg from iframe - in iframe, window.top.postMessage('hello', '*')
+window.onmessage = function(event) { 
+	if(event.origin == '*'){ // the msg adress it can be evrythine
+		if (event.data == 'hello') {
+			alert('It works!');
+		}
+	}
+}
+
+</script>
+   
+</body>
+</html> 
