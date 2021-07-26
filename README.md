@@ -10,7 +10,7 @@ https://www.python.org/downloads/
 ## In windows open cmd and type:
 $ python main_start_ws.py
 
-## In Linux or mac open shell and type:
+## In linux or mac open shell and type:
 $ python3 main_start_ws.py
 
 ## Open Browser
