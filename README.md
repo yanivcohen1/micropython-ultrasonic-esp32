@@ -1,6 +1,6 @@
-# micropython-ultrasonic
+# micropython-ultrasonic-esp32
 Micropython ultrasonic project
-
+for run in ESP32 microcontroller
 
 ## How to run it
 
