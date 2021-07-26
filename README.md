@@ -2,7 +2,7 @@
 Micropython ultrasonic project
 for run in ESP32 microcontroller
 
-## How to run it on desktop:
+## How to run it as simulation on desktop:
 
 ## First install python 3
 https://www.python.org/downloads/
