@@ -18,4 +18,4 @@ browser url:
 http://localhost/
 
 ## screenshot:
-![image](https://user-images.githubusercontent.com/16209258/127014959-cb03e69c-5f4c-469e-9de2-6e84fc66603d.png)
+![image](https://user-images.githubusercontent.com/16209258/127017723-bd108fc2-a8cd-4229-add5-99f7d7b77deb.png)
