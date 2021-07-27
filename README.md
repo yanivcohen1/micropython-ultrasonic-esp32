@@ -22,6 +22,6 @@ http://localhost/
 ## screenshot:
 ![image](https://user-images.githubusercontent.com/16209258/127017723-bd108fc2-a8cd-4229-add5-99f7d7b77deb.png)
 
-## this project include MQTT for connecting to "Home Assistans" a smart home software
+## it's include native javascript gui (without frameworks)
 
-## and native javascript gui (without frameworks)
+## this project include prepration for MQTT for connecting to "Home Assistans" a smart home software
