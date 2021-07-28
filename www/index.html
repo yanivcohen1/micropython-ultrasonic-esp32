@@ -68,34 +68,41 @@ body {
 	<a href="boiler_page.html" target="iframe_a" onclick="selecte(this)">Boiler</a>
 	<!-- <a href="wstest.html" target="iframe_a" onclick="selecte(this)">WebSockets</a>
 	<a href="wschat.html" target="iframe_a" onclick="selecte(this)">chate</a>
-	<a href="test.pyhtml" target="iframe_a" onclick="selecte(this)">pyhtml</a> -->
+	<a href="test.pyhtml" target="iframe_a" onclick="selecte(this)">pyhtml</a>
+  <a href="index.html" target="iframe_a" onclick="selecte(this)">this</a> -->
 </div>
 
 <div id="main">
-  <span style="font-size:30px;cursor:pointer" onclick="clickNavMenu()">&#9776;</span>
+  <span id="open" style="font-size:30px;cursor:pointer" onclick="clickNavMenu(this)">&#9776;</span>
+  <span id="close" style="font-size:30px;cursor:pointer" onclick="closeNav(this)">&#9747;</span>
   <iframe id="frame" src="main._page.html" name="iframe_a" frameborder="0" style="overflow:hidden;overflow-x:hidden;overflow-y:hidden;height:100%;width:100%;position:absolute;top:50px;left:0px;right:0px;bottom:0px" height="calc(100% + 100px)" width="100%"></iframe>
 </div>
 
 <script>
-let isOpen = false;
-function clickNavMenu() {
-	if(!isOpen){
+
+init()
+
+function init(){
+  document.getElementById("close").style.display = "block";
+}
+
+function clickNavMenu(elmnt) {
 		isOpen = true
 		document.getElementById("mySidenav").style.width = "100px";
 		document.getElementById("main").style.marginLeft = "100px";
 		document.getElementById("frame").style.marginLeft = "100px";
 		document.getElementById("frame").style.width = "calc(100% - 100px)";
-	} else {
-		isOpen = false
-		closeNav();
-	}
+    elmnt.style.display = "none";
+    document.getElementById("close").style.display = "block";
 }
 
-function closeNav() {
+function closeNav(elmnt) {
   document.getElementById("mySidenav").style.width = "0";
   document.getElementById("main").style.marginLeft= "0";
   document.getElementById("frame").style.marginLeft = "0";
   document.getElementById("frame").style.width = "100%";
+  elmnt.style.display = "none";
+  document.getElementById("open").style.display = "block";
 }
 
 function selecte(elmnt) {
