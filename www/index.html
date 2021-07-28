@@ -80,7 +80,8 @@ body {
 
 <script>
 
-function init() {
+window.addEventListener("load", onWindowLoad, false);
+function onWindowLoad() {
   document.getElementById("open").style.display = "block";
   document.getElementById("close").style.display = "none";
 }
