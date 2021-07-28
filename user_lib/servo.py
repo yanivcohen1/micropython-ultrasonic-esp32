@@ -29,7 +29,7 @@ def dutyForAngle(angle):
 
 def angleForDuty(duty):
     angle = None
-    if 30 <= duty <= 140: angle = int(SERVO_MAX_DUTY * (duty - SERVO_MIN_DUTY) / SERVO_RANG_DUTY)
+    if 30 <= duty <= 140: angle = int(SERVO_MAX_ANGLE * (duty - SERVO_MIN_DUTY) / SERVO_RANG_DUTY)
     else: print('error duty, need to be 30 <= duty <= 140')
     return angle
 
