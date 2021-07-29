@@ -20,9 +20,10 @@ browser url:
 http://localhost/
 
 ## screenshots:
-![image](https://user-images.githubusercontent.com/16209258/127436879-6b423dbc-a2e1-4ee4-8575-07afb10939bd.png)
+![image](https://user-images.githubusercontent.com/16209258/127437620-7e1ce1c9-bf11-43ff-b0db-99594821e735.png)
 
-![image](https://user-images.githubusercontent.com/16209258/127436509-f1d883d1-3dc9-4bb9-94e5-0b076ca2bd7e.png)
+![image](https://user-images.githubusercontent.com/16209258/127437529-1e8fd1fa-1e01-47c2-a48a-2a782840a877.png)
+
 
 
 ## it's include native javascript gui (without frameworks)
