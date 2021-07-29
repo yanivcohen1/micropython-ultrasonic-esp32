@@ -61,21 +61,17 @@ body {
 
 <div id="mySidenav" class="sidenav">
 	<!-- <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a> -->
-	<a href="tester/tester_menu.html" target="iframe_a" class="active" onclick="selecte(this)">tester</a>
-	<a href="ultrasonic_page.html" target="iframe_a" onclick="selecte(this)">Ultrasonic</a>
-	<a href="events_data_page.html" target="iframe_a" onclick="selecte(this)">events</a>
-	<a href="contineuse-data-page.html" target="iframe_a" onclick="selecte(this)">contineuse</a>
-	<a href="boiler_page.html" target="iframe_a" onclick="selecte(this)">Boiler</a>
-	<!-- <a href="wstest.html" target="iframe_a" onclick="selecte(this)">WebSockets</a>
-	<a href="wschat.html" target="iframe_a" onclick="selecte(this)">chate</a>
-	<a href="test.pyhtml" target="iframe_a" onclick="selecte(this)">pyhtml</a>
-  <a href="index.html" target="iframe_a" onclick="selecte(this)">this</a> -->
+  <a href="tester_page.html" target="iframe_tester" class="active" onclick="selecte(this)">main</a>
+	<a href="wstest.html" target="iframe_tester" onclick="selecte(this)">WebSockets</a>
+	<a href="wschat.html" target="iframe_tester" onclick="selecte(this)">chate</a>
+	<a href="test.pyhtml" target="iframe_tester" onclick="selecte(this)">pyhtml</a>
 </div>
 
 <div id="main">
-  <span id="open" style="font-size:20px;cursor:pointer" onclick="clickNavMenu(this)">&#9776; Open Main</span>
-  <span id="close" style="font-size:20px;cursor:pointer" onclick="closeNav(this)">&#9747; Close Main</span>
-  <iframe id="frame" src="tester/tester_menu.html" name="iframe_a" frameborder="0" style="overflow:hidden;overflow-x:hidden;overflow-y:hidden;height:100%;width:100%;position:absolute;top:50px;left:0px;right:0px;bottom:0px" height="calc(100% + 100px)" width="100%"></iframe>
+  <!-- <span>&nbsp;&nbsp;</span> -->
+  <span id="open" style="font-size:20px;cursor:pointer;padding-left:10px;" onclick="clickNavMenu(this)">&#9776; Open Tester</span>
+  <span id="close" style="font-size:20px;cursor:pointer" onclick="closeNav(this)">&#9747; Close Tester</span>
+  <iframe id="frame" src="tester_page.html" name="iframe_tester" frameborder="0" style="overflow:hidden;overflow-x:hidden;overflow-y:hidden;height:100%;width:100%;position:absolute;top:50px;left:0px;right:0px;bottom:0px" height="calc(100% + 100px)" width="100%"></iframe>
 </div>
 
 <script>

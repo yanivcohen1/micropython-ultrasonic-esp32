@@ -16,13 +16,7 @@ def connect_and_subscribe():
   client_id="vegepod_client" # mqtt client name
   mqtt_server_ip="10.0.7.99", # mqtt server ip
 
-  client = MQTTClient(client_id, mqtt_server_ip) # user="mqtt_user", password='mqtt_password')
-    # To Configure MQTT client with password
-    #   client = MQTTClient(client_id="vegepod_client",
-    #                     server="10.0.7.99", # mqtt server ip
-    #                     port=1883,
-    #                     user="mqtt", # mqtt user
-    #                     password='Password') # mqtt password
+  client = MQTTClient(client_id, mqtt_server_ip) # port='mqtt_port', user='mqtt_user', password='mqtt_password')
   client.set_callback(sub_cb) # call when get topic_sub
   client.connect()
   client.subscribe(topic_sub) # subscribe for this topic msg

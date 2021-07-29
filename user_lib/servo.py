@@ -39,12 +39,13 @@ def tester():
             global lastDuty
             current_sliderPot = sliderPot.read() # min is 0, max read 4095
             # print(current_sliderPot)
-            calcPotDuty = int(SERVO_MIN_DUTY + SERVO_RANG_DUTY * current_sliderPot / POT_MAX_READ)
+            angle = current_sliderPot * SERVO_MAX_ANGLE / POT_MAX_READ
+            calcPotDuty = dutyForAngle(angle) # int(SERVO_MIN_DUTY + SERVO_RANG_DUTY * current_sliderPot / POT_MAX_READ)
             if not(calcPotDuty == lastDuty or calcPotDuty == lastDuty + 1  \
                 or calcPotDuty == lastDuty - 1):
                 lastDuty = calcPotDuty
                 servo.duty(calcPotDuty)
-                print('angle is:', current_sliderPot * SERVO_MAX_ANGLE / POT_MAX_READ)
+                print('angle is:', angleForDuty(calcPotDuty))# current_sliderPot * SERVO_MAX_ANGLE / POT_MAX_READ)
                 sleep(15/1000) # 15ms time take the motor to get to position
             else: sleep(1/1000) # 1ms loop delay
     except KeyboardInterrupt : # control+C press
