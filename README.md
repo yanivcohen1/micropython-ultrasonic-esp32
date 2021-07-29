@@ -20,9 +20,12 @@ browser url:
 http://localhost/
 
 ## screenshots:
-![image](https://user-images.githubusercontent.com/16209258/127437620-7e1ce1c9-bf11-43ff-b0db-99594821e735.png)
+![image](https://user-images.githubusercontent.com/16209258/127449486-26c9f190-ae22-4001-aa82-50c29e3e48cb.png)
 
-![image](https://user-images.githubusercontent.com/16209258/127437529-1e8fd1fa-1e01-47c2-a48a-2a782840a877.png)
+![image](https://user-images.githubusercontent.com/16209258/127449967-d7ab80b7-a807-4a97-9895-3a08bdfe4ced.png)
+
+![image](https://user-images.githubusercontent.com/16209258/127449156-d2ad3ea8-c44d-4843-b6bd-ce31ea892378.png)
+
 
 
 
