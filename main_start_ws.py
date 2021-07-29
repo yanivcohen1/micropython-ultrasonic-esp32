@@ -1,11 +1,9 @@
 
 from microWebSrv.microWebSrv import MicroWebSrv
-import json
 # from time import sleep
-from   _thread   import allocate_lock # ,start_new_thread
+# from   _thread   import allocate_lock ,start_new_thread
 from events_data_page import WSJoinChat as MyWSJoinChat
-from events_data_page import _chatLock, routeHandlers
-import socket
+from events_data_page import routeHandlers
 import tester.tester_page
 # for ultrasonic page auto load
 # from ultrasonic_page import WSJoin as ultrasonicWSJoin 	
@@ -21,6 +19,7 @@ def _acceptWebSocketCallback(webSocket, httpClient):
 	print('   - Path   : %s'    % httpClient.GetRequestTotalPath())
 	# print('   - Origin : %s'    % webSocket.Request.Origin)
 	if httpClient.GetRequestTotalPath().lower() == '/wschat' :
+	    from tester.chat_page import WSJoinChat		
 	    WSJoinChat(webSocket, httpClient.GetAddr())
 	elif httpClient.GetRequestTotalPath().lower() == '/wstest' :
 		webSocket.RecvTextCallback   = _recvTextCallback
@@ -70,49 +69,6 @@ def _closedCallback(webSocket) :
 #	( "/test",	"GET",	_httpHandlerTestGet ),
 #	( "/test",	"POST",	_httpHandlerTestPost )
 # ]
-
-# ============================================================================
-
-def WSJoinChat(webSocket, addr) :
-    webSocket.RecvTextCallback = OnWSChatTextMsg
-    webSocket.RecvBinaryCallback = _recvBinaryCallback
-    webSocket.ClosedCallback      = OnWSChatClosed
-    with _chatLock :
-        for ws in _chatWebSockets :
-            ws[0].SendText('<%s:%s HAS JOINED THE CHAT>' % addr) # ws[1] self addr
-        _chatWebSockets.append([webSocket, addr])
-        webSocket.SendText('<WELCOME %s:%s>' % addr)
-
-def OnWSChatTextMsg(webSocket, msg) :
-    # addr = _calcAddr(webSocket) # webSocket.Request.UserAddress
-	addr = None
-	for ws in _chatWebSockets :
-		if ws[0] == webSocket: addr=ws[1]
-	with _chatLock :
-		for ws in _chatWebSockets :
-			ws[0].SendText('<%s:%s> %s' % (addr[0], addr[1], msg)) # ws[1][0], sw[1][1] self addr
-
-def OnWSChatClosed(webSocket) :
-    # addr =  _calcAddr(webSocket) # webSocket.Request.UserAddress
-	addr = None
-	for ws in _chatWebSockets :
-		if ws[0] == webSocket: addr=ws[1]
-	with _chatLock :
-		if webSocket in _chatWebSockets :
-			_chatWebSockets.remove(webSocket)
-			for ws in _chatWebSockets :
-				ws[0].SendText('<%s:%s HAS LEFT THE CHAT>' % addr) # ws[1] self addr
-
-def _calcAddr(webSocket):
-	addr= str(webSocket._socket)
-	x = addr.find("raddr=('") + 8
-	y= addr[x:]
-	z = y.find("'")
-	host=addr[x:x+z]
-	y= addr[x+z:]
-	z = y.find(")")
-	port=y[3:z]
-	return [host, port]
 
 # ============================================================================
 
