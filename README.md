@@ -19,7 +19,7 @@ $ python3 main_start_ws.py
 browser url:
 http://localhost/
 
-## screenshot:
+## screenshots:
 ![image](https://user-images.githubusercontent.com/16209258/127436879-6b423dbc-a2e1-4ee4-8575-07afb10939bd.png)
 
 ![image](https://user-images.githubusercontent.com/16209258/127436509-f1d883d1-3dc9-4bb9-94e5-0b076ca2bd7e.png)
