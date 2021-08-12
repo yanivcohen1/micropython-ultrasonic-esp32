@@ -88,9 +88,13 @@ def cb_timer(delay_sec, websocket):
         # wtd_now = ticks_ms()
         # print('wtd: ', wtd_now - wdt_last)
         #wdt_last = wtd_now
-        wdt = WDT(timeout=10000) # enable the wachdog with a timeout of 20s (1s is the minimum)
-        wdt.feed() # need to call this wachdog fun minimum evry 20s or the bord will restart itself
-        fun_timer(None, websocket)
+        
+        with _chatLock:
+            # need wochdog
+            wdt = WDT(timeout=10000) # enable the wachdog with a timeout of 20s (1s is the minimum)
+            wdt.feed() # need to call this wachdog fun minimum evry 20s or the bord will restart itself
+            # print('auarer lock')
+            fun_timer(None, websocket)
         
 def fun_timer(delay, websocket):
     global current_distance
@@ -104,12 +108,12 @@ def fun_timer(delay, websocket):
         last_sliderPot = curt_slider
         sliderIn = curt_slider
         print('slider set to is: ', sliderIn)
-        with _chatLock:
-            for ws in _chatWebSockets:
-                send = {}
-                send[SendData.slider] = str(sliderIn)
-                try: ws.SendText(json.dumps(send))
-                except: pass
+        # with _chatLock:
+        for ws in _chatWebSockets:
+            send = {}
+            send[SendData.slider] = str(sliderIn)
+            try: ws.SendText(json.dumps(send))
+            except: pass
     else:
         if markForSave:
             saveLastSlider(sliderIn)
@@ -119,33 +123,33 @@ def fun_timer(delay, websocket):
     if (distance > 180 and current_distance != 180):
         current_distance = 180 
     else: current_distance = distance
-    with _chatLock:
-        for ws in _chatWebSockets:
-            send = {}
-            send[SendData.distance] = str(current_distance)
-            try: ws.SendText(json.dumps(send))
-            except: pass
+    # with _chatLock:
+    for ws in _chatWebSockets:
+        send = {}
+        send[SendData.distance] = str(current_distance)
+        try: ws.SendText(json.dumps(send))
+        except: pass
     global ledOn
     if current_distance > sliderIn and ledOn :
         ledOn = False
         led.off()
-        with _chatLock:
-            for ws in _chatWebSockets:
-                send = {}
-                send[SendData.led] = str(False)
-                try: ws.SendText(json.dumps(send))
-                except: pass
-                print('ws sending led: ', False)
+        # with _chatLock:
+        for ws in _chatWebSockets:
+            send = {}
+            send[SendData.led] = str(False)
+            try: ws.SendText(json.dumps(send))
+            except: pass
+            print('ws sending led: ', False)
     elif current_distance <= sliderIn and not ledOn :
         ledOn = True
         led.on()
-        with _chatLock:
-            for ws in _chatWebSockets:
-                send = {}
-                send[SendData.led] = str(True)
-                try: ws.SendText(json.dumps(send))
-                except: pass
-                print('ws sending led: ', True)
+        # with _chatLock:
+        for ws in _chatWebSockets:
+            send = {}
+            send[SendData.led] = str(True)
+            try: ws.SendText(json.dumps(send))
+            except: pass
+            print('ws sending led: ', True)
     servo_distance = int(current_distance)
     servo_dist_min_move = 60
     if servo_distance > servo_dist_min_move: servo_distance = servo_dist_min_move
@@ -158,15 +162,15 @@ def OnWSTextMsg(webSocket, msg):
     if RecData.slider in recv:
         global sliderIn
         sliderIn = int(recv[RecData.slider])
-        saveLastSlider(sliderIn)
         print('slider set to is: ', recv[RecData.slider])
         with _chatLock:
+            saveLastSlider(sliderIn)
             for ws in _chatWebSockets:
                 send = {}
                 send[SendData.slider] = str(sliderIn)
                 try: ws.SendText(json.dumps(send))
                 except: pass
-        OLED_display()
+            OLED_display()
 
 def OnWSClosed(webSocket) :
     _chatWebSockets.remove(webSocket)
