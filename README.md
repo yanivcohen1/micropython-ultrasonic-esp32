@@ -8,9 +8,9 @@ for run on ESP32 microcontroller
 https://www.python.org/downloads/
 
 ## In windows open cmd or powershell and type:
-$ python main_start_ws.py <br />
-or <br />
-$ py main_start_ws.py <br />
+    $ python main_start_ws.py
+    or
+    $ py main_start_ws.py
 
 ## In linux or mac open shell and type:
 $ python3 main_start_ws.py
